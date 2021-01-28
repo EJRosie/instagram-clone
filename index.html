@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="styles.css">
+  <title>Instagram Login</title>
+
+  <script src="/__/firebase/8.2.4/firebase-app.js"></script>
+  <script src="/__/firebase/8.2.4/firebase-auth.js"></script>
+  <script src="/__/firebase/init.js"></script>
+
+</head>
+
+<body>
+
+  <div id="main-container">
+    
+      <main>
+        <div class="main-left">
+          <img src="https://www.instagram.com/static/images/homepage/screenshot5-2x.jpg/5e04169b9308.jpg"/>
+        </div>
+        <div class="main-right">
+          <div class="auth-top">
+            <h1 class="logo">Instagram</h1>
+            <div class="auth-form">
+              <form action="">
+                <div class="input-container">
+                  <input type="email" id="email" required placeholder=" "/>
+                  <span class="input-label">Email</span>
+                </div>
+                <div class="input-container">
+                  <input type="password" id="password" required placeholder=" "/>
+                  <span class="input-label">Password</span>
+                </div>
+                <button class="auth-button" type="submit" id="sign-in">Log In</button>
+                <div class="or-container">
+                  <div class="or-line"></div>
+                  <div class="or">or</div>
+                  <div class="or-line"></div>
+                </div>
+                <div class="facebook-container">
+                  <a>
+                    <span class="facebook-logo"></span> Log in with Facebook
+                  </a>
+                </div>
+                <a class="password-reset" href="#">Forgot password?</a>
+              </form>
+            </div>
+          </div>
+          <div class="auth-mid">
+            <p>Don't have an account? <a class="auth-switch" href="sign-up.html">Sign Up</a></p>
+          </div>
+          <div class="auth-bot">
+            <span class="get-app">Get the app.</span>
+            <div class="apps">
+              <img src="https://www.instagram.com/static/images/appstore-install-badges/badge_ios_english-en.png/180ae7a0bcf7.png" alt="app-store badge">
+              <img src="https://www.instagram.com/static/images/appstore-install-badges/badge_android_english-en.png/e9cd846dc748.png" alt="google-play badge">
+            </div>
+          </div>
+        </div>
+      </main>
+      <footer>
+        <div class="footer-links">
+          <a href="#">About</a>
+          <a href="#">Blog</a>
+          <a href="#">Jobs</a>
+          <a href="#">Help</a>
+          <a href="#">API</a>
+          <a href="#">Privacy</a>
+          <a href="#">Terms</a>
+          <a href="#">Top Accounts</a>
+          <a href="#">Hashtags</a>
+          <a href="#">Locations</a>
+        </div>
+        <div class="footer-links">
+          <a href="#">Beauty</a>
+          <a href="#">Dance & Performance</a>
+          <a href="#">Fitness</a>
+          <a href="#">Food & Drink</a>
+          <a href="#">Home & Garden</a>
+          <a href="#">Music</a>
+          <a href="#">Visual Arts</a>
+        </div>
+        <p class="copyright">
+          English 
+          &copy 2021 Instagram from Facebook
+        </p>
+      </footer>
+
+
+  </div>
+
+  <script type="text/javascript">
+    function handleSignIn() {
+       document.getElementById("sign-in").disabled = true;
+       document.getElementById("sign-in").textContent = "Loading";
+       var email = document.getElementById("email").value;
+       var password = document.getElementById("password").value;
+       firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL)
+      .then(res => {
+        firebase.auth().signInWithEmailAndPassword(email, password)
+        .catch((ish) => {
+          document.getElementById("sign-in").disabled = false;
+          document.getElementById("sign-in").textContent = "Sign In";
+          if (ish.code === "auth/wrong-password") {
+            alert("Wrong password.");
+          } else {
+            alert(ish.message);
+          }
+          console.log(ish);
+        });
+      })
+     }
+
+     function initApp() {
+      // Listening for auth state changes.
+      firebase.auth().onAuthStateChanged(function(user) {
+        console.log("Auth Changed: ", user);
+        if (user) {
+          window.location.href = 'user.html';
+        };
+      });
+      document.getElementById("sign-in").addEventListener("click", handleSignIn, false);
+    }
+
+    window.onload = function() {
+      initApp();
+    };
+   </script>
+</body>
+
+</html>

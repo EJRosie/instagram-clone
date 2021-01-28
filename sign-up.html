@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="styles.css">
+  <title>Instagram Sign Up</title>
+  <script src="/__/firebase/8.2.4/firebase-app.js"></script>
+  <script src="/__/firebase/8.2.4/firebase-auth.js"></script>
+  <script src="/__/firebase/8.2.4/firebase-database.js"></script>
+  <script src="/__/firebase/init.js"></script>
+</head>
+
+<body>
+
+  <div id="main-container">
+    
+      <main>
+        <div class="main-left">
+          <img src="https://www.instagram.com/static/images/homepage/screenshot5-2x.jpg/5e04169b9308.jpg"/>
+        </div>
+        <div class="main-right">
+          <div class="auth-top">
+            <h1 class="logo">Instagram</h1>
+            <h2 class="tagline">Sign up to see photos and videos from your friends.</h2>
+            <div class="auth-form">
+              <form action="">
+                <div class="facebook-container facebook-signup">
+                  <a>
+                    <span class="facebook-logo signup-logo"></span> Log in with Facebook
+                  </a>
+                </div>
+                <div class="or-container">
+                  <div class="or-line"></div>
+                  <div class="or">or</div>
+                  <div class="or-line"></div>
+                </div>
+                <div class="input-container">
+                  <input type="email" id="email" required placeholder=" " placeholder=" "/>
+                  <span class="input-label">Email</span>
+                </div>
+                <div class="input-container">
+                  <input type="text" id="name" required placeholder=" "/>
+                  <span class="input-label">Full Name</span>
+                </div>
+                <div class="input-container">
+                  <input type="text" id="username" required placeholder=" "/>
+                  <span class="input-label">Username</span>
+                </div>
+                <div class="input-container">
+                  <input type="password" id="password" required placeholder=" "/>
+                  <span class="input-label">Password</span>
+                </div>
+                <button class="auth-button" type="submit" id="sign-up">Sign Up</button>
+                <span class="agree">By signing up you agree to our <a href="#">Terms</a>, <a href="#">Data Policy</a>, and <a href="#">Cookies Policy</a> </span>
+              </form>
+            </div>
+          </div>
+          <div class="auth-mid">
+            <p>Have an account? <a class="auth-switch" href="index.html">Log in</a></p>
+          </div>
+          <div class="auth-bot">
+            <span class="get-app">Get the app.</span>
+            <div class="apps">
+              <img src="https://www.instagram.com/static/images/appstore-install-badges/badge_ios_english-en.png/180ae7a0bcf7.png" alt="app-store badge">
+              <img src="https://www.instagram.com/static/images/appstore-install-badges/badge_android_english-en.png/e9cd846dc748.png" alt="google-play badge">
+            </div>
+          </div>
+        </div>
+      </main>
+      <footer>
+        <div class="footer-links">
+          <a href="#">About</a>
+          <a href="#">Blog</a>
+          <a href="#">Jobs</a>
+          <a href="#">Help</a>
+          <a href="#">API</a>
+          <a href="#">Privacy</a>
+          <a href="#">Terms</a>
+          <a href="#">Top Accounts</a>
+          <a href="#">Hashtags</a>
+          <a href="#">Locations</a>
+        </div>
+        <div class="footer-links">
+          <a href="#">Beauty</a>
+          <a href="#">Dance & Performance</a>
+          <a href="#">Fitness</a>
+          <a href="#">Food & Drink</a>
+          <a href="#">Home & Garden</a>
+          <a href="#">Music</a>
+          <a href="#">Visual Arts</a>
+        </div>
+        <p class="copyright">
+          English 
+          &copy 2021 Instagram from Facebook
+        </p>
+      </footer>
+
+
+  </div>
+
+  <script type="text/javascript">
+    function handleSignUp() {
+      document.getElementById("sign-up").disabled = true;
+      document.getElementById("sign-up").textContent = "Loading";
+      var email = document.getElementById("email").value;
+      var password = document.getElementById("password").value;
+      var name = document.getElementById("name").value;
+      var username = document.getElementById("username").value;
+
+      if (email.length < 6) { return alert("Email must be 6 characters");}
+      if (password.length < 6) { return alert("Passwords must be 6 characters"); }
+      //const db = firebase.database().ref();
+      // firebase.database().ref('users/' + "1FiQrRyYAoRFcLBafWN88HDzwyd2").set({
+      //   username,
+      //   name,
+      //   email,
+      //   password
+      // });
+      firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL)
+      .then(async res => {
+        await firebase.auth().createUserWithEmailAndPassword(email, password)
+        .then(async userCredentials => {
+          firebase.auth().onAuthStateChanged(() => {});
+          await firebase.database().ref('users/' + userCredentials.user.uid).set({
+            username,
+            name,
+            email,
+            password
+          });
+        })
+        .catch(ish => {
+          if (ish.code == "auth/weak-password") {
+            alert("The password is too weak.");
+          } else {
+            alert(ish.message);
+          }
+          document.getElementById("sign-up").disabled = false;
+          document.getElementById("sign-up").textContent = "Sign Up";
+          console.log(ish);
+        });
+      })
+
+    }
+
+    function initApp() {
+      // Listening for auth state changes.
+      firebase.auth().onAuthStateChanged(function(user) {
+        if (user) {
+          setTimeout(function(){ window.location.href = 'user.html'; }, 1000);
+        };
+      });
+      document.getElementById("sign-up").addEventListener("click", handleSignUp, false);
+    }
+
+    window.onload = function() {
+      firebase.auth().currentUser
+      initApp();
+    };
+    </script>
+</body>
+
+</html>

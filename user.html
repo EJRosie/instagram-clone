@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="styles.css">
+  <title>Instagram Login</title>
+
+  <script src="/__/firebase/8.2.4/firebase-app.js"></script>
+  <script src="/__/firebase/8.2.4/firebase-auth.js"></script>
+  <script src="/__/firebase/8.2.4/firebase-database.js"></script>
+  <script src="/__/firebase/init.js"></script>
+
+  <script type="text/javascript" defer>
+    function initApp() {
+      // Listening for auth state changes.
+      firebase.auth().onAuthStateChanged(function(user) {
+        console.log("Auth Changed: ", user);
+        if (!user) {
+          window.location.href = 'index.html';
+        }
+        if (user) {
+          console.log("Searching DB...");
+          var uid = user.uid;
+          var userInfo = firebase.database().ref('users/' + uid).once('value')
+          .then((snapshot) => {
+            const data = snapshot.val();
+            console.log(data);
+            document.getElementById("loading").textContent = "";
+            document.getElementById("email").textContent = data.email;
+            document.getElementById("password").textContent = data.password;
+            document.getElementById("username").textContent = data.username;
+            document.getElementById("name").textContent = data.name;
+          });
+        };
+      });
+      document.getElementById("sign-out").addEventListener("click", handleSignOut, false);
+    }
+
+    window.onload = function() {
+      initApp();
+    };
+  </script>
+</head>
+
+<body>
+
+  <div id="main-container">
+    
+      <main>
+        <div>
+          <h2 id="loading">Loading...</h2>
+          <p class="user-info">Email: <span id="email"></span></p>
+          <p class="user-info">Password: <span id="password"></span></p>
+          <p class="user-info">Username: <span id="username"></span></p>
+          <p class="user-info">Full Name: <span id="name"></span></p>
+          <button class="auth-button" type="submit" id="sign-out">Sign Out</button>
+        </div>
+      </main>
+      <footer>
+        <div class="footer-links">
+          <a href="#">About</a>
+          <a href="#">Blog</a>
+          <a href="#">Jobs</a>
+          <a href="#">Help</a>
+          <a href="#">API</a>
+          <a href="#">Privacy</a>
+          <a href="#">Terms</a>
+          <a href="#">Top Accounts</a>
+          <a href="#">Hashtags</a>
+          <a href="#">Locations</a>
+        </div>
+        <div class="footer-links">
+          <a href="#">Beauty</a>
+          <a href="#">Dance & Performance</a>
+          <a href="#">Fitness</a>
+          <a href="#">Food & Drink</a>
+          <a href="#">Home & Garden</a>
+          <a href="#">Music</a>
+          <a href="#">Visual Arts</a>
+        </div>
+        <p class="copyright">
+          English 
+          &copy 2021 Instagram from Facebook
+        </p>
+      </footer>
+
+
+  </div>
+
+  <script type="text/javascript">
+    function handleSignOut() {
+      firebase.auth().signOut()
+      .then(res => {
+        window.location.href = 'index.html';
+      })
+     }
+   </script>
+</body>
+
+</html>
